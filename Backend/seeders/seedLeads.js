@@ -1,5 +1,6 @@
-const { Lead, User } = require('../models');
-const faker = require('faker');
+const { Lead} = require('../models/Lead');
+const { User } = require('../models/User');
+const { faker } = require('@faker-js/faker');
 
 const seedLeads = async () => {
   try {
