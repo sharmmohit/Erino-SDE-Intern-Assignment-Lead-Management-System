@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const sequelize = require('./config/database');
 const authRoutes = require('./routes/auth');
 const leadRoutes = require('./routes/leads');
-const seedLeads = require('./seeders/seedLeads');
+// const seedLeads = require('./seeders/seedLeads'); // Comment out for now
 require('dotenv').config();
 
 const app = express();
@@ -43,10 +43,10 @@ sequelize.sync({ force: false })
   .then(async () => {
     console.log('Database connected');
     
-    // Seed leads if needed
-    if (process.env.SEED_DATA === 'true') {
-      await seedLeads();
-    }
+    // Comment out seeding for now to test basic functionality
+    // if (process.env.SEED_DATA === 'true') {
+    //   await seedLeads();
+    // }
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);

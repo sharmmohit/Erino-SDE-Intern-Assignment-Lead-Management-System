@@ -1,6 +1,6 @@
 const express = require('express');
 const { Op } = require('sequelize');
-const { Lead } = require('../models/Lead');
+const Lead = require('../models/Lead'); // Fixed import (no {})
 const authenticate = require('../middleware/auth');
 const router = express.Router();
 

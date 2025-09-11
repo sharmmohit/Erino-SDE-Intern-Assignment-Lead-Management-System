@@ -59,6 +59,10 @@ const Lead = sequelize.define('Lead', {
   is_qualified: {
     type: DataTypes.BOOLEAN,
     defaultValue: false
+  },
+  user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
   timestamps: true,
@@ -66,4 +70,4 @@ const Lead = sequelize.define('Lead', {
   updatedAt: 'updated_at'
 });
 
-module.exports = Lead;
+module.exports = Lead; // Direct export (no {})

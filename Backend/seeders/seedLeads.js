@@ -1,45 +1,55 @@
-const { Lead} = require('../models/Lead');
-const { User } = require('../models/User');
-const { faker } = require('@faker-js/faker');
+const User = require('../models/User'); // Fixed import (no {})
+const Lead = require('../models/Lead'); // Fixed import (no {})
 
 const seedLeads = async () => {
   try {
-    // Find or create test user
-    const [user] = await User.findOrCreate({
-      where: { email: 'test@example.com' },
-      defaults: {
+    console.log('Starting seed process...');
+    
+    // Use findOne and create instead of findOrCreate
+    let user = await User.findOne({ where: { email: 'test@example.com' } });
+    
+    if (!user) {
+      user = await User.create({
         firstName: 'Test',
         lastName: 'User',
+        email: 'test@example.com',
         password: 'password123'
-      }
-    });
+      });
+      console.log('User created:', user.email);
+    } else {
+      console.log('User found:', user.email);
+    }
 
-    // Generate 100+ leads
+    // Check if leads already exist
+    const existingLeads = await Lead.count();
+    if (existingLeads > 0) {
+      console.log('Leads already exist, skipping seeding');
+      return;
+    }
+
+    // Generate simple test data (without faker)
     const leads = [];
     const statuses = ['new', 'contacted', 'qualified', 'lost', 'won'];
     const sources = ['website', 'facebook_ads', 'google_ads', 'referral', 'events', 'other'];
 
-    for (let i = 0; i < 150; i++) {
-      const firstName = faker.name.firstName();
-      const lastName = faker.name.lastName();
-      
+    for (let i = 0; i < 50; i++) {
       leads.push({
         user_id: user.id,
-        first_name: firstName,
-        last_name: lastName,
-        email: faker.internet.email(firstName, lastName),
-        phone: faker.phone.phoneNumber(),
-        company: faker.company.companyName(),
-        city: faker.address.city(),
-        state: faker.address.stateAbbr(),
-        source: faker.random.arrayElement(sources),
-        status: faker.random.arrayElement(statuses),
-        score: faker.datatype.number({ min: 0, max: 100 }),
-        lead_value: faker.finance.amount(100, 10000, 2),
-        last_activity_at: faker.date.recent(),
-        is_qualified: faker.datatype.boolean(),
-        created_at: faker.date.past(),
-        updated_at: faker.date.recent()
+        first_name: `First${i}`,
+        last_name: `Last${i}`,
+        email: `lead${i}@example.com`,
+        phone: `555-${100 + i}-${1000 + i}`,
+        company: `Company ${i}`,
+        city: `City ${i % 10}`,
+        state: ['CA', 'NY', 'TX', 'FL', 'IL', 'OH', 'GA', 'NC', 'MI', 'WA'][i % 10],
+        source: sources[i % sources.length],
+        status: statuses[i % statuses.length],
+        score: i % 101,
+        lead_value: (i * 100).toFixed(2),
+        last_activity_at: new Date(Date.now() - i * 86400000),
+        is_qualified: i % 4 === 0,
+        created_at: new Date(Date.now() - i * 86400000),
+        updated_at: new Date()
       });
     }
 
